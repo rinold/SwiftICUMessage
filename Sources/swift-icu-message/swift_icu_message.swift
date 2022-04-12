@@ -6,6 +6,8 @@ extension String {
     struct Regex {
         static let plural = "(?:\\b%@, plural,|\\G(?!\\A))\\s*(\\S+)\\s*\\{([^}]*)\\}"
         static let select = "(?:\\b%@, select,|\\G(?!\\A))\\s*(\\S+)\\s*\\{([^}]*)\\}"
+        static let replacement = "\\{%@\\}"
+        
     }
     
     enum SignedQuantifiers: String, CaseIterable {
@@ -18,9 +20,22 @@ extension String {
         case few, other
     }
     
-//    func replacementFromICU(replacing templates: [String: Any]) throws -> String {
-//        
-//    }
+    func replacementFromICU(replacing templates: [String: String]) throws -> String {
+        var mutatingSelf = self
+        try templates.forEach { template in
+            let pattern = String(format: Regex.replacement, template.key)
+            let regex = try NSRegularExpression(pattern: pattern)
+            let matches = regex.matches(in: mutatingSelf, range: NSRange(mutatingSelf.startIndex ..< mutatingSelf.endIndex, in: mutatingSelf))
+            
+            if let lowerBound = matches.first?.range.lowerBound,
+               let lowerIndex = mutatingSelf.index(mutatingSelf.startIndex, offsetBy: (lowerBound), limitedBy: mutatingSelf.endIndex),
+               let upperBound = matches.last?.range.upperBound,
+               let upperIndex = mutatingSelf.index(mutatingSelf.startIndex, offsetBy: (upperBound), limitedBy: mutatingSelf.endIndex) {
+                mutatingSelf.replaceSubrange(lowerIndex ..< upperIndex, with: template.value)
+            }
+        }
+        return mutatingSelf
+    }
     
     func selectFromICU(replacing templates: [String: Any]) throws -> String {
         var mutatingSelf = self

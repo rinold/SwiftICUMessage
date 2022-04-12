@@ -4,12 +4,12 @@
 
 Currently implemented: 
 - Plurals
-- Simple (single level control flows)
+- Single level control flows / select statements
+- Value replacements / placeholder values
 
 TODO: 
-[ ] Value Replacements
-[ ] Complex Control Flows
-[ ] Plurals with multiple statements
+[ ] Complex Control Flows\
+[ ] Plurals with multiple statements\
 
 
 These implementations follow the rules as specified here 

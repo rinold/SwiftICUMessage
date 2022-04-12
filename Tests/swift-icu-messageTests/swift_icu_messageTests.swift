@@ -53,6 +53,11 @@ final class swift_icu_messageTests: XCTestCase {
         )
         XCTAssertEqual("a gender is other and the best beer is Ale", resultString)
     }
+    
+    func test_placeholder() throws {
+        let resultString = try Strings.placeholderString.replacementFromICU(replacing: ["value": "10"])
+        XCTAssertEqual("Credit score decreased by 10", resultString)
+    }
 }
 
 extension swift_icu_messageTests {
