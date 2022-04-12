@@ -7,7 +7,7 @@ Currently implemented:
 - Single level control flows / select statements
 - Value replacements / placeholder values
 
-TODO: 
+TODO: \
 [ ] Complex Control Flows\
 [ ] Plurals with multiple statements\
 
