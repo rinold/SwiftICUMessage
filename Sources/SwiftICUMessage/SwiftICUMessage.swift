@@ -9,20 +9,26 @@ import Foundation
 
 extension String {
 
-    public func icuPlural(replacing templates: [String: Any]) throws -> String {
-        try pluralFromICU(replacing: templates)
+    public func icuPlural(
+        replacing templates: [String: Any],
+        languageCode: String? = Locale.current.languageCode
+    ) throws -> String {
+        try pluralFromICU(replacing: templates, languageCode: languageCode)
     }
 }
 
 extension String {
 
-    struct Regex {
+    fileprivate struct Regex {
         static let plural = "\\{?\\s*(?:\\b%@, plural,|\\G(?!\\A))\\s*(\\S+)\\s*\\{([^}]*)\\}\\s*\\}?"
     }
 
-    func pluralFromICU(replacing templates: [String: Any]) throws -> String {
+    fileprivate func pluralFromICU(
+        replacing templates: [String: Any],
+        languageCode: String?
+    ) throws -> String {
 
-        let wordQuantifier = WordQuantifier()
+        let wordQuantifier = WordQuantifier(languageCode: languageCode)
         let comparisonQuantifier = ComparisonQuantifier()
         var mutatingSelf = self
 
@@ -36,14 +42,14 @@ extension String {
             let removeCharacters = String(format: "%@, plural,", template.key)
 
             var pluralValues = [String: String]()
-            print("* matches : \(matches)")
+//            print("* matches : \(matches)")
             matches.forEach { match in
                 var matchString = String(mutatingSelf[Range(match.range, in: mutatingSelf)!])
                 matchString = matchString
                     .replacingOccurrences(of: removeCharacters, with: "")
                     .trimmingCharacters(in: .whitespaces.union(.init(charactersIn: "{}")))
                 
-                print("* matchString \(matchString)")
+//                print("* matchString \(matchString)")
 
                 let matchValues = matchString.components(separatedBy: "{")
                 guard let quantifier = matchValues.first?.trimmingCharacters(in: .whitespaces),
@@ -54,11 +60,11 @@ extension String {
 
                 pluralValues[quantifier] = String(phrase)
 
-                print("* match : \(matchString)")
+//                print("* match : \(matchString)")
             }
             let sortedKeys = pluralValues.keys.sorted()
-            print("* pluralValues : \(pluralValues)")
-            print("* pluralValues keys : \(sortedKeys)")
+//            print("* pluralValues : \(pluralValues)")
+//            print("* pluralValues keys : \(sortedKeys)")
 
             guard let intTemplate = template.value as? Int else {
                 return
@@ -78,19 +84,18 @@ extension String {
                 return
             }
 
-            print("* phrase to use \(phraseToUse)")
+//            print("* phrase to use \(phraseToUse)")
 
             if let lowerBound = matches.first?.range.lowerBound,
                let lowerIndex = mutatingSelf.index(mutatingSelf.startIndex, offsetBy: lowerBound, limitedBy: mutatingSelf.endIndex),
                let upperBound = matches.last?.range.upperBound,
                let upperIndex = mutatingSelf.index(mutatingSelf.startIndex, offsetBy: upperBound, limitedBy: mutatingSelf.endIndex) {
 
-//                let matchRange = NSRange(lowerBound ..< upperBound)
                 mutatingSelf.replaceSubrange(lowerIndex..<upperIndex, with: phraseToUse)
             }
         }
-        print("* mutatingSelf \n \(mutatingSelf)")
-        print("* self \n \(self)")
+//        print("* mutatingSelf \n \(mutatingSelf)")
+//        print("* self \n \(self)")
         return mutatingSelf
     }
 }

@@ -3,44 +3,51 @@ import XCTest
 
 final class swift_icu_messageTests: XCTestCase {
 
+    func test_Plurals_ar_few() throws {
+      let format = "Add {count, plural, =1{one more item} few{a few more items} other{# more items} } to unlock"
+      let resultString = try format.icuPlural(replacing: ["count": 7], languageCode: "ar")
+
+      XCTAssertEqual("Add a few more items to unlock", resultString)
+    }
+
     func test_Plurals_other_1() throws {
       let format = "Add {count, plural, =1{1 more item} other{# more items} } to unlock"
-      let resultString = try format.pluralFromICU(replacing: ["count": 1])
+      let resultString = try format.icuPlural(replacing: ["count": 1])
 
       XCTAssertEqual("Add 1 more item to unlock", resultString)
     }
 
     func test_Plurals_other_11() throws {
       let format = "Add {count, plural, =1{1 more item} other{# more items}} to unlock"
-      let resultString = try format.pluralFromICU(replacing: ["count": 11])
+      let resultString = try format.icuPlural(replacing: ["count": 11])
 
       XCTAssertEqual("Add 11 more items to unlock", resultString)
     }
 
     func test_Plurals1() throws {
       let format = "Add {count, plural, =1{1 more item} other{# more items}} to unlock"
-      let resultString = try format.pluralFromICU(replacing: ["count": 11])
+      let resultString = try format.icuPlural(replacing: ["count": 11])
 
       XCTAssertEqual("Add 11 more items to unlock", resultString)
     }
 
     func test_whenPluralStringCalled_with0() throws {
 
-        let resultString = try Strings.pluralString.pluralFromICU(replacing: ["mice": 0])
+        let resultString = try Strings.pluralString.icuPlural(replacing: ["mice": 0])
 
         XCTAssertEqual("There are no mice", resultString)
     }
 
     func test_whenPluralStringCalled_with1() throws {
 
-        let resultString = try Strings.pluralString.pluralFromICU(replacing: ["mice": 1])
+        let resultString = try Strings.pluralString.icuPlural(replacing: ["mice": 1])
 
         XCTAssertEqual("There is one mouse", resultString)
     }
 
     func test_whenPluralStringCalled_withOther() throws {
 
-        let resultString = try Strings.pluralString.pluralFromICU(replacing: ["mice": 100])
+        let resultString = try Strings.pluralString.icuPlural(replacing: ["mice": 100])
 
         XCTAssertEqual("There are a few mice", resultString)
     }

@@ -13,7 +13,7 @@ struct WordQuantifier {
     private let languageRule: WordQuantifierLanguageRule
 
     init?(
-        languageCode: String? = Locale.current.languageCode
+        languageCode: String?
     ) {
         guard let languageCode,
               let languageRule = WordQuantifierRules.rule(for: languageCode)
