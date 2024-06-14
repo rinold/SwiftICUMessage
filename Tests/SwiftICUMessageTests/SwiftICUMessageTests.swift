@@ -10,6 +10,13 @@ final class swift_icu_messageTests: XCTestCase {
       XCTAssertEqual("Add a few more items to unlock", resultString)
     }
 
+    func test_Plurals_ar_other() throws {
+      let format = "{count, plural, =1{1 غرض} other{# أغراض}}"
+      let resultString = try format.icuPlural(replacing: ["count": 7], languageCode: "ar")
+
+      XCTAssertEqual("7 أغراض", resultString)
+    }
+
     func test_Plurals_other_1() throws {
       let format = "Add {count, plural, =1{1 more item} other{# more items} } to unlock"
       let resultString = try format.icuPlural(replacing: ["count": 1])

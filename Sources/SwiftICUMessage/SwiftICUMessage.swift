@@ -70,13 +70,12 @@ extension String {
                 return
             }
 
-            if let cardinalToken = wordQuantifier?.cardinalToken(for: intTemplate),
-               let quantifiedValue = pluralValues[cardinalToken.rawValue] {
-                phraseToUse = quantifiedValue
-            }
-
             if let comparisonKeyMatch = comparisonQuantifier.match(for: intTemplate, in: sortedKeys),
                let quantifiedValue = pluralValues[comparisonKeyMatch] {
+                phraseToUse = quantifiedValue
+            } else if let cardinalToken = wordQuantifier?.cardinalToken(for: intTemplate),
+               let quantifiedValue = pluralValues[cardinalToken.rawValue] ??
+                pluralValues[WordQuantifierToken.other.rawValue] {
                 phraseToUse = quantifiedValue
             }
 
