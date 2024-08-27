@@ -21,7 +21,12 @@ extension String {
         replacing templates: [String: Any],
         formatter: IntegerFormatStyle<Value>
     ) throws -> String {
-        let languageCode = formatter.locale.language.languageCode?.identifier
+        let languageCode: String?
+        if #available(iOS 16, *) {
+            languageCode = formatter.locale.language.languageCode?.identifier
+        } else {
+            languageCode = formatter.locale.languageCode
+        }
         return try pluralFromICU(replacing: templates, languageCode: languageCode) { _, value in
             value.formatted(formatter)
         }
