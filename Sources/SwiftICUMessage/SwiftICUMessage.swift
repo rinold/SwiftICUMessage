@@ -15,6 +15,17 @@ extension String {
     ) throws -> String {
         try pluralFromICU(replacing: templates, languageCode: languageCode)
     }
+    
+    @available(macOS, introduced: 13)
+    public func icuPlural<Value>(
+        replacing templates: [String: Any],
+        formatter: IntegerFormatStyle<Value>
+    ) throws -> String {
+        let languageCode = formatter.locale.language.languageCode?.identifier
+        return try pluralFromICU(replacing: templates, languageCode: languageCode) { _, value in
+            value.formatted(formatter)
+        }
+    }
 }
 
 extension String {
@@ -25,7 +36,8 @@ extension String {
 
     fileprivate func pluralFromICU(
         replacing templates: [String: Any],
-        languageCode: String?
+        languageCode: String?,
+        valueModifier: ((String, Int) -> String)? = nil
     ) throws -> String {
 
         let wordQuantifier = WordQuantifier(languageCode: languageCode)
@@ -79,7 +91,9 @@ extension String {
                 phraseToUse = quantifiedValue
             }
 
-            guard let phraseToUse = phraseToUse?.replacingOccurrences(of: "#", with: String(intTemplate)) else {
+            let value = valueModifier?(template.key, intTemplate) ?? String(intTemplate)
+
+            guard let phraseToUse = phraseToUse?.replacingOccurrences(of: "#", with: value) else {
                 return
             }
 

@@ -3,6 +3,24 @@ import XCTest
 
 final class swift_icu_messageTests: XCTestCase {
 
+    func test_Plurals_custom_formatter() throws {
+        let format = "{count, plural, one {Show 1 Result} other{Show # Results}}"
+        let customFormatter = IntegerFormatStyle<Int>()
+        let resultString = try format.icuPlural(
+            replacing: ["count": 1000],
+            formatter: customFormatter
+        )
+
+        XCTAssertEqual("Show 1,000 Results", resultString)
+    }
+
+    func test_Plurals_regex() throws {
+        let format = "{count, plural, one {Show 1 Result} other{Show # Results}}"
+        let resultString = try format.icuPlural(replacing: ["count": 1], languageCode: "en")
+
+        XCTAssertEqual("Show 1 Result", resultString)
+    }
+
     func test_Plurals_ar_few() throws {
       let format = "Add {count, plural, =1{one more item} few{a few more items} other{# more items} } to unlock"
       let resultString = try format.icuPlural(replacing: ["count": 7], languageCode: "ar")
